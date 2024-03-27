@@ -1,62 +1,59 @@
+/* Global Styles */
 body {
-  font-family: 'Roboto', sans-serif;
-  font-size: 18px;
+  font-family: 'Open Sans', sans-serif;
 }
 
-textarea {
-  background: #f8f8f8;
-  border: 2px solid #ccc;
-  border-radius: 5px;
-  resize: vertical;
-  color: #333;
-  padding: 8px;
-  width: 100%;
+.container-lg {
+  max-width: 800px;
+  margin: auto;
 }
 
-.description {
-  white-space: pre-line;
+/* Header Styles */
+header {
+  background-color: #f8f9fa;
+  padding: 20px;
 }
 
-.time-block {
-  border-radius: 10px;
-  margin-bottom: 10px;
+/* Section Styles */
+.notification {
+  background-color: #d4edda;
+  color: #155724;
   padding: 10px;
+  margin-bottom: 20px;
 }
 
-.row {
-  border-top: 1px solid #ccc;
-}
-
-.hour {
-  background-color: #f0f0f0;
-  color: #333;
-  border-top: 1px dashed #999;
+/* Time Block Styles */
+.time-block {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #dee2e6;
+  padding: 10px 0;
 }
 
 .past {
-  background-color: #f8f8f8;
-  color: #777;
+  background-color: #f8d7da;
 }
 
 .present {
-  background-color: #ffcccc;
-  color: #333;
+  background-color: #ffeeba;
 }
 
 .future {
-  background-color: #d9f2d9;
-  color: #333;
+  background-color: #d1ecf1;
 }
 
+/* Button Styles */
 .saveBtn {
+  background-color: #007bff;
+  color: #fff;
   border: none;
+  padding: 8px 16px;
   border-radius: 5px;
-  background-color: #4CAF50;
-  color: white;
-  padding: 10px 20px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .saveBtn:hover {
-  background-color: #45a049;
+  background-color: #0056b3;
 }

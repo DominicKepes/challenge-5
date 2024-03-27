@@ -1,63 +1,93 @@
-$(document).ready(function () {
-  // listen for save button clicks
-  $('.saveBtn').on('click', function () {
-    // get nearby values
-    var value = $(this).siblings('.description').val();
-    var time = $(this).parent().attr('id');
+document.addEventListener('DOMContentLoaded', function () {
+  const timeBlocksContainer = document.getElementById('timeBlocks');
+  const currentDayElement = document.getElementById('currentDay');
 
-    // save in localStorage
-    localStorage.setItem(time, value);
+  function saveTask(time, task) {
+    localStorage.setItem(time, task);
+    showNotification();
+  }
 
-    // Show notification that item was saved to localStorage by adding class 'show'
-    $('.notification').addClass('show');
-
-    // Timeout to remove 'show' class after 5 seconds
+  function showNotification() {
+    const notification = document.getElementById('notify');
+    notification.classList.add('show');
     setTimeout(function () {
-      $('.notification').removeClass('show');
+      notification.classList.remove('show');
     }, 5000);
-  });
+  }
 
   function hourUpdater() {
-    // get current number of hours
-    var currentHour = dayjs().hour();
+    const currentHour = dayjs().hour();
+    const timeBlockElements = document.querySelectorAll('.time-block');
 
-    // loop over time blocks
-    $('.time-block').each(function () {
-      var blockHour = parseInt($(this).attr('id').split('-')[1]);
-      console.log(blockHour)
-      // check if we've moved past this time
+    timeBlockElements.forEach(function (block) {
+      const blockHour = parseInt(block.id.split('-')[1]);
+
       if (blockHour < currentHour) {
-        $(this).addClass('past');
-        console.log(blockHour + "<" + currentHour)
+        block.classList.add('past');
       } else if (blockHour === currentHour) {
-        $(this).removeClass('past');
-        $(this).addClass('present');
-        console.log(blockHour + "=" + currentHour)
+        block.classList.remove('past');
+        block.classList.add('present');
       } else {
-        $(this).removeClass('past');
-        $(this).removeClass('present');
-        $(this).addClass('future');
-        console.log(blockHour + ">" + currentHour)
+        block.classList.remove('past', 'present');
+        block.classList.add('future');
       }
     });
   }
 
-  hourUpdater();
+  function loadTasks() {
+    for (let i = 9; i <= 17; i++) {
+      const time = `hour-${i}`;
+      const timeBlock = document.getElementById(time);
+      if (timeBlock) {
+        const descriptionElement = timeBlock.querySelector('.description');
+        if (descriptionElement) {
+          const savedTask = localStorage.getItem(time);
+          if (savedTask) {
+            descriptionElement.value = savedTask;
+          }
+        } else {
+          console.error(`Description element not found for time block ${time}`);
+        }
+      } else {
+        console.error(`Time block not found for hour ${i}`);
+      }
+    }
+  }
 
-  // set up interval to check if current time needs to be updated
-  setInterval(hourUpdater, 15000);
+  function createTimeBlock(hour) {
+    const timeBlock = document.createElement('div');
+    timeBlock.classList.add('row', 'time-block');
+    timeBlock.id = `hour-${hour}`;
 
-  // load any saved data from localStorage
-  $('#hour-9 .description').val(localStorage.getItem('hour-9'));
-  $('#hour-10 .description').val(localStorage.getItem('hour-10'));
-  $('#hour-11 .description').val(localStorage.getItem('hour-11'));
-  $('#hour-12 .description').val(localStorage.getItem('hour-12'));
-  $('#hour-13 .description').val(localStorage.getItem('hour-13'));
-  $('#hour-14 .description').val(localStorage.getItem('hour-14'));
-  $('#hour-15 .description').val(localStorage.getItem('hour-15'));
-  $('#hour-16 .description').val(localStorage.getItem('hour-16'));
-  $('#hour-17 .description').val(localStorage.getItem('hour-17'));
+    timeBlock.innerHTML = `
+      <div class="col-2 col-md-1 hour text-center py-3">${hour > 12 ? hour - 12 + 'PM' : hour + 'AM'}</div>
+      <textarea class="col-8 col-md-10 description" rows="3"></textarea>
+      <button class="btn saveBtn col-2 col-md-1" aria-label="save">
+        <i class="fas fa-save" aria-hidden="true"></i>
+      </button>
+    `;
 
-  // display current day on page
-  $('#currentDay').text(dayjs().format('dddd, MMMM D, YYYY'));
+    const saveBtn = timeBlock.querySelector('.saveBtn');
+    const description = timeBlock.querySelector('.description');
+
+    saveBtn.addEventListener('click', function () {
+      saveTask(timeBlock.id, description.value);
+    });
+
+    return timeBlock;
+  }
+
+  function init() {
+    for (let i = 9; i <= 24; i++) {
+      timeBlocksContainer.appendChild(createTimeBlock(i));
+    }
+
+    loadTasks();
+    hourUpdater();
+    setInterval(hourUpdater, 15000);
+    currentDayElement.textContent = dayjs().format('dddd, MMMM D, YYYY');
+
+  }
+
+  init();
 });
